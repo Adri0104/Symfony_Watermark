@@ -82,8 +82,30 @@ class PictureService
 //        imagewebp($resized_picture, $path . '/mini/' . $width . 'x' . $height . '-' . $fichier);
 
         $picture->move($path . '/', $fichier);
+        $this->add_logo($path . '/' . $fichier, $this->params->get('images_directory') . '/logo/logo_resized.jpg', $path . '/' . $fichier);
 
         return $fichier;
+    }
+
+    function add_logo($source_file,$logo_file,$output)
+    {
+        $source = imagecreatefromjpeg($source_file);
+//        $source_width = imagesx($source);
+//        $source_height = imagesy($source);
+
+        $logo = imagecreatefromjpeg($logo_file);
+        $logo_width = imagesx($logo);
+        $logo_height = imagesy($logo);
+
+//        $centerX = ($source_width - $logo_width) / 2;
+//        $centerY = ($source_height - $logo_height) / 2;
+
+        imagecopymerge($source, $logo, imagesx($source) - $logo_width - 10, imagesy($source) - $logo_height - 10, 0, 0,
+            $logo_width, $logo_height, 40);
+
+        imagejpeg($source,$output);
+        imagedestroy($source);
+        imagedestroy($logo);
     }
 
     public function delete(string $fichier, ?string $folder = ''/*, ?int $width = 250, ?int $height = 250*/)
